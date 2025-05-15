@@ -11,10 +11,17 @@ function App() {
   const [hash, setHash] = useState("");
   const [result, setResult] = useState(null);
 
-  const handleLogin = () => {
-    alert(`Bienvenido, ${user}!`);
+  // 🔹 Autenticación con el backend
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(`${BACKEND_URL}/api/login`, { user, password });
+      alert(response.data.message); // Muestra el mensaje del servidor
+    } catch (error) {
+      alert("❌ Error en la autenticación");
+    }
   };
 
+  // 🔹 Validación de documentos en Blockchain
   const validateDocument = async () => {
     try {
       const response = await axios.post(`${BACKEND_URL}/api/validate`, { hash });
@@ -24,6 +31,7 @@ function App() {
     }
   };
 
+  // 🔹 Firma de documentos con MetaMask
   const signDocument = async () => {
     if (typeof window.ethereum !== "undefined") {
       const web3 = new Web3(window.ethereum);
@@ -42,10 +50,12 @@ function App() {
       <h2>Blockchain Militar SecureAccess</h2>
       <p>Bienvenido al sistema de firma y validación de documentos</p>
 
+      {/* 🔹 Formulario de autenticación */}
       <input type="text" placeholder="Usuario o Administrador" value={user} onChange={(e) => setUser(e.target.value)} />
       <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} />
       <button onClick={handleLogin}>Ingresar</button>
 
+      {/* 🔹 Validación y firma de documentos */}
       <h3>Validar o Firmar Documento</h3>
       <input type="text" placeholder="Hash del documento" value={hash} onChange={(e) => setHash(e.target.value)} />
       <button onClick={validateDocument}>Validar Documento</button>
